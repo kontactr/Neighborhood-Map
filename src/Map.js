@@ -95,6 +95,9 @@ populateInfoWindow = (marker) => {
             
 
             // Make sure the marker property is cleared if the infowindow is closed.
+
+            //TODO: image se to null when closed or when another marker is clicked. 
+
             temp.addListener('closeclick', function() {
                 temp.marker.setAnimation(null);
                 marker = null;
@@ -104,10 +107,18 @@ populateInfoWindow = (marker) => {
 
             this.getMakeImageUrl(marker.appMarkerId).then((res)=>{
 
+                console.log(res);
+
                 if(res.meta.code === 200){
 
-                    temp.setContent('<div>' + marker.title + '</div>' +
-                    "<div><img id='markerInfoWindowImage' src='' /></div>"
+                    temp.setContent(
+                        "<section id='markerInfoWindow'>"+
+                        "<div id='markerInfoWindowTitle'>" + marker.title + "</div>" +
+                        "<div><img id='markerInfoWindowImage' src='' /></div>"+
+                        "<div id='markerInfoWindowCredit'> Credit: " + (res.response.photos.items[0].user.firstName || "") + "  "+ 
+                        (res.response.photos.items[0].user.lastName || "")
+                        +"</div>"+
+                        "</section>"
                     );
 
                     let  photoRecObject = res.response.photos.items[0];
@@ -117,15 +128,18 @@ populateInfoWindow = (marker) => {
 
                 }else{
 
-                    temp.setContent('<div>' + marker.title + '</div>' +
-                    '<div>Photo Not Found</div>'
+                    temp.setContent('<div id="markerInfoWindowTitle">' + marker.title + '</div>' +
+                    '<div id="markerInfoWindowCredit">Photo Not Found</div>'+
+                    '<div id="markerInfoWindowCredit">Credit Not Found</div>'
                     );
 
                 }
 
-            }).catch(() => {
-                temp.setContent('<div>' + marker.title + '</div>' +
-                '<div>Photo Not Found</div>'
+            }).catch((err) => {
+                
+                temp.setContent('<div id="markerInfoWindowTitle">' + marker.title + '</div>' +
+                '<div id="markerInfoWindowCredit">Photo Not Found</div>'+
+                '<div id="markerInfoWindowCredit">Credit Not Found</div>'
                 );
             });
             
@@ -304,7 +318,7 @@ componentDidMount(){
 
 getMarkerIcon = (title) => {
     
-    let markerUrl = "./images/";
+    let markerUrl = "./";
     let titleLower = title.toLowerCase();
 
     if(titleLower.includes("restaurant")){
@@ -322,8 +336,6 @@ getMarkerIcon = (title) => {
     return markerUrl;
 
 }
-
-
 
     render(){
         return (

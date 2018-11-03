@@ -294,3 +294,41 @@ html, body {
   color: #f5a623;
   
 }
+
+#markerInfoWindow{
+  display: flex;
+  flex-wrap: wrap;
+  text-align: center;
+  align-items: center;
+  width: 210px;
+  background: #f5a623;
+}
+
+#markerInfoWindowTitle{
+  width: 100%;
+  font-size: 1.5em;
+  padding-bottom: 5px;
+  padding-top: 5px;
+  margin: auto; 
+  font-weight: 400;
+  color: black;
+}
+
+#markerInfoWindowImage{
+  
+  padding: 0px;
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-bottom: 2px;
+  
+}
+
+#markerInfoWindowCredit{
+  margin: auto;
+  text-align: center;
+  align-items: center;
+  font-size: 1.2em;
+  margin-bottom: 2px;
+  color: black;
+  font-weight: 400;
+}
