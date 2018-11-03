@@ -6,33 +6,114 @@ promiseResolve = null;
 
  state = {
      map: null,
-     markers: []
+     markers: [],
+     largeInfowindow: null
  }
 
  callMethod = () => {
      console.log(this)
  }
 
+ setMarkerAnimationBounceAndOff = (markerToNullAnimate) => {
+    markerToNullAnimate.setAnimation(window.google.maps.Animation.BOUNCE);
+    setTimeout(markerToNullAnimate.setAnimation.bind(markerToNullAnimate) , 5000 , null);
+ }
+
+ linkListClickToMapMarker = (restaurant) => {
+    
+    if(this.state.largeInfowindow){
+        let returnMarker = this.getFilterMarkerFromRestaurant(restaurant);
+            if(returnMarker){
+                    this.populateInfoWindow(returnMarker);
+                    this.setMarkerAnimationBounceAndOff(returnMarker);
+                   // returnMarker.setAnimation(window.google.maps.Animation.BOUNCE);
+                   // setTimeout(this.setMarkerAnimationBounceOff  , 5000 , returnMarker);
+                }
+
+    }else{
+        this.promiseResolve.then(() => {
+            if(this.state.largeInfowindow){
+                let returnMarker = this.getFilterMarkerFromRestaurant(restaurant);
+                if(returnMarker){
+                    this.populateInfoWindow(returnMarker);
+                    this.setMarkerAnimationBounceAndOff(returnMarker);
+                   // returnMarker.setAnimation(window.google.maps.Animation.BOUNCE);
+                   // setTimeout(this.setMarkerAnimationBounceOff , 5000 , returnMarker);
+                }
+            }
+        });
+    }
+
+ }
+
+ getFilterMarkerFromRestaurant = (restaurant) => {
+
+    for(let index = 0 ; index < this.state.markers.length ; index++){
+        if(this.state.markers[index].appMarkerId === restaurant.venue.id){
+            return this.state.markers[index];
+        }
+    }
+
+ }
+
+ 
+populateInfoWindow = (marker) => {
+
+    //console.log(marker , this.state.largeInfowindow);
+
+    if(this.state.largeInfowindow){
+
+        let temp = this.state.largeInfowindow;
+        if (
+            temp.marker !== marker) {
+            
+            temp.marker = marker;
+            temp.setContent('<div>'  + marker.title + '</div>');
+            // Make sure the marker property is cleared if the infowindow is closed.
+            temp.addListener('closeclick', function() {
+                temp.marker.setAnimation(null);
+                marker = null;
+            });
+
+        }
+
+            temp.open(this.state.map, marker);
+            
+            
+          
+    }
+
+}
 
  pointMarkers = (locations) => {
 
-    this.setState({
+    this.setState( (state) => {return {
 
         markers: locations.map((locationObject) => {
  
-            return new window.google.maps.Marker({
+            let markerIcon = this.getMarkerIcon((locationObject.venue.categories[0] && locationObject.venue.categories[0].name) || "place")
+
+            let marker =  new window.google.maps.Marker({
                 position: {
                     lat:locationObject.venue.location.lat,
                     lng:locationObject.venue.location.lng
                 },
                 map: this.state.map,
                 title: locationObject.venue.name,
-                appMarkerId: locationObject.venue.id
+                appMarkerId: locationObject.venue.id,
+                icon: markerIcon
               });
 
+              marker.addListener('click' , (event) => {
+                this.populateInfoWindow(marker);
+                this.setMarkerAnimationBounceAndOff(marker);
+                console.log(marker);
+              } );
+
+              return marker;
         })
 
-    });
+     } });
 
  }
 
@@ -128,17 +209,25 @@ componentDidMount(){
                 "lng":73.85484481593303
             },
             "map": map,
-            "title": "Pune",
-            "appMarkerId": "abcd"
+            "title": "New Poona Bakery",
+            "appMarkerId": "abcd",
+            "icon": this.getMarkerIcon("place")
           }
 
         )];
   
+        markers.forEach((marker) => {
+            marker.addListener("click" , () => {
+                this.populateInfoWindow(marker);    
+                this.setMarkerAnimationBounceAndOff(marker);
+            });
+        });
 
         //change-1
         this.setState({
             map: map,
-            markers: markers
+            markers: markers,
+            largeInfowindow: new window.google.maps.InfoWindow()
         });
     }).bind(this));
 }
@@ -159,6 +248,29 @@ componentDidMount(){
 
     });
 }
+
+
+getMarkerIcon = (title) => {
+    
+    let markerUrl = "./images/";
+    let titleLower = title.toLowerCase();
+
+    if(titleLower.includes("restaurant")){
+        markerUrl += "restaurant.png";
+    }else if(titleLower.includes("food truck")){
+        markerUrl += "food-truck.png";
+    }else if(titleLower.includes("café") || title.includes("coffee") ){
+        markerUrl += "coffee.png";
+    }else if(titleLower.includes("bar") || titleLower.includes("pub")){
+        markerUrl += "wine.png";
+    }else{
+        markerUrl += "store.png";
+    }
+
+    return markerUrl;
+
+}
+
 
 
     render(){

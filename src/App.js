@@ -68,10 +68,12 @@ class App extends Component {
 
     let url = new URL("https://api.foursquare.com/v2/venues/explore");
     let params = {
-      query: "food",
+      
+                
+      query: 'café,food-truck,restaurant',
       near: placename,
-      limit: 30,
-      radius: 250,
+      limit: 50,
+      radius: 100,
       client_id: "VVZNTZCTW20DLYBQBYD20ZMW5WWEYIM5V4FNL0041WCG4U3Q",
       client_secret: "UZRNMMDE0IEPBJ2XIOURKNGBKVWOHUFUY14LTRQNIOPDSWFB",
       v: "20181101"
@@ -133,6 +135,12 @@ class App extends Component {
     return this.state.locations;
   } 
 
+  linkListClickToMap = (restaurant) => {
+      if(this.mapChildObject){
+        this.mapChildObject.linkListClickToMapMarker(restaurant);
+      }
+  }
+
 
 
   render() {
@@ -155,6 +163,7 @@ class App extends Component {
             formSubmitEvent = {this.placesFoundByFourSquare}
             getLocations = {this.getLocations}
             getFilteredMarker = {(this.getFilteredMarker)}
+            linkListClickToMap = {this.linkListClickToMap}
             ref={listContainer => {this.listContainerChildObject = listContainer}}
         ></ListContainer>
 
@@ -162,12 +171,7 @@ class App extends Component {
        getLocations = {this.getLocations}
        ></Map>
        
-        
-
-
-
-       
-
+      
       </section>
       </main>
     );
