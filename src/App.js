@@ -60,6 +60,22 @@ class App extends Component {
     this.cacheButtonObject.compo.classList.toggle("change");
     
   }
+
+  drawerItemSelectionAction = () => {
+
+      //console.log("YES - 0");
+      //console.log(this.cacheButtonObject.compo.classList);
+      if(this.cacheButtonObject.compo.classList[0] === ("change")){
+
+          //console.log("YES - 1");
+
+          if(this.cacheButtonObject.pressed){
+            this.cacheButtonObject.drawer.style.left = "-400px";
+            this.cacheButtonObject.pressed = false;
+            this.cacheButtonObject.compo.classList.toggle("change");
+          }
+      }
+  }
   
   
   placesFoundByFourSquare = (event , placename) => {
@@ -164,6 +180,7 @@ class App extends Component {
             getLocations = {this.getLocations}
             getFilteredMarker = {(this.getFilteredMarker)}
             linkListClickToMap = {this.linkListClickToMap}
+            drawerItemSelectionAction = {this.drawerItemSelectionAction}
             ref={listContainer => {this.listContainerChildObject = listContainer}}
         ></ListContainer>
 

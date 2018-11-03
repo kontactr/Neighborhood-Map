@@ -81,6 +81,7 @@ export default class ListContainer extends React.Component{
             getNewPlaceQuery = {this.getNewPlaceQuery}
             getFilteredMarker = {this.props.getFilteredMarker}
             linkListClickToMap = {this.props.linkListClickToMap}
+            drawerItemSelectionAction = {this.props.drawerItemSelectionAction}
             ref={listView => {this.listViewdObject = listView}}
             ></ListView>
 

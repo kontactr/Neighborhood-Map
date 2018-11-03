@@ -56,6 +56,27 @@ promiseResolve = null;
 
  }
 
+
+getMakeImageUrl = (markerResId) => {
+
+    let url = new URL("https://api.foursquare.com/v2/venues/"+markerResId+"/photos?");
+    let params = {
+      
+      
+      
+      limit: 5,
+      client_id: "VVZNTZCTW20DLYBQBYD20ZMW5WWEYIM5V4FNL0041WCG4U3Q",
+      client_secret: "UZRNMMDE0IEPBJ2XIOURKNGBKVWOHUFUY14LTRQNIOPDSWFB",
+      v: "20181101"
+    };
+
+    url.search = new URLSearchParams(params);
+    console.log(url);
+
+    return fetch(url).then((res) => {return res.json()}).catch(() => {return {"meta":{"code":400}}});
+
+} 
+
  
 populateInfoWindow = (marker) => {
 
@@ -66,9 +87,13 @@ populateInfoWindow = (marker) => {
         let temp = this.state.largeInfowindow;
         if (
             temp.marker !== marker) {
+                if(temp.marker){
+                    temp.marker.setAnimation(null);
+                }
             
             temp.marker = marker;
-            temp.setContent('<div>'  + marker.title + '</div>');
+            
+
             // Make sure the marker property is cleared if the infowindow is closed.
             temp.addListener('closeclick', function() {
                 temp.marker.setAnimation(null);
@@ -77,6 +102,33 @@ populateInfoWindow = (marker) => {
 
         }
 
+            this.getMakeImageUrl(marker.appMarkerId).then((res)=>{
+
+                if(res.meta.code === 200){
+
+                    temp.setContent('<div>' + marker.title + '</div>' +
+                    "<div><img id='markerInfoWindowImage' src='' /></div>"
+                    );
+
+                    let  photoRecObject = res.response.photos.items[0];
+                    let photoUrl = photoRecObject.prefix+"200x200" + photoRecObject.suffix; 
+
+                    document.getElementById("markerInfoWindowImage").setAttribute("src" , photoUrl);
+
+                }else{
+
+                    temp.setContent('<div>' + marker.title + '</div>' +
+                    '<div>Photo Not Found</div>'
+                    );
+
+                }
+
+            }).catch(() => {
+                temp.setContent('<div>' + marker.title + '</div>' +
+                '<div>Photo Not Found</div>'
+                );
+            });
+            
             temp.open(this.state.map, marker);
             
             
@@ -238,7 +290,7 @@ componentDidMount(){
     return new Promise((resolve) => {
 
         let script = document.createElement("script");
-        script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyDMMgxBbkZCfyb1sXfdkA1XiFvyrOK8uxg&callback=initMap";
+        script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyDMMgxBbkZCfyb1sXfdkA1XiFvyrOK8uxg&libraries=geometry&callback=initMap";
         script.async = true;
         script.defer = true;
         script.setAttribute("id" , "app-google-map-script");

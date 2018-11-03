@@ -56,7 +56,9 @@ export default class ListView extends React.Component{
 
                     filteredData.map((restaurant) => {
 //                        console.log(restaurant.venue.name);
-                       return  (<li key={restaurant.venue.id} className='list-item' onClick={(event) => {this.props.linkListClickToMap(restaurant)}}>
+                       return  (<li key={restaurant.venue.id} className='list-item' onClick={(event) => {
+                           this.props.drawerItemSelectionAction();
+                           this.props.linkListClickToMap(restaurant);}}>
                         <span className='list-item-hotel-name'>{restaurant.venue.name}</span>
                         <span className='list-item-hotel-type'>{(restaurant.venue.categories[0] && restaurant.venue.categories[0].name) || "Place"}</span>
                         <span className='list-item-hotel-address'>{restaurant.venue.location.formattedAddress.join(" ")}</span>
