@@ -234,6 +234,8 @@ populateInfoWindow = (marker , focusable=false) => {
 
  pointMarkers = (locations) => {
 
+    let bounds = new window.google.maps.LatLngBounds();
+
     this.setState( (state) => {return {
 
         markers: locations.map((locationObject) => {
@@ -257,10 +259,15 @@ populateInfoWindow = (marker , focusable=false) => {
                 console.log(marker);
               } );
 
+              bounds.extend(new window.google.maps.LatLng(marker.position.lat(),marker.position.lng()));
+
               return marker;
         })
-
+            
      } });
+     
+     this.state.map.fitBounds(bounds);
+     this.state.map.panToBounds(bounds);
 
  }
 
@@ -344,7 +351,7 @@ componentDidMount(){
             document.getElementById('map'),
             {
                 center: {lat: -34.397, lng: 150.644},
-                zoom: 8,
+                zoom: 4,
                 mapTypeControl: false
             }
         );

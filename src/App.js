@@ -50,10 +50,13 @@ class App extends Component {
         }
     });
 
-    window.onkeydown = function(e) { 
-      return !(e.keyCode === 32) ;
-     };
-    
+    window.onkeydown = function(e) {
+      let p  = e.originalTarget.getAttribute("name");
+      console.log(p);
+      if( !["field1" , "field2"].includes(p) ) {
+          return !(e.keyCode == 32);
+      }
+    };
     console.log("All Set");
     
     
