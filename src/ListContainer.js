@@ -17,6 +17,10 @@ export default class ListContainer extends React.Component{
 
     }
 
+    retriveBackFocus = () =>{
+        this.listViewdObject.retriveBackFocus();
+    }
+
     notifyUpdateLocations = () => {
         this.setState({
             newLocations: this.props.getLocations(),
@@ -48,8 +52,9 @@ export default class ListContainer extends React.Component{
         return this.state.placesQuery;
     }
 
+
     render(){
-       return ( <section id="list-container">
+       return ( <section id="list-container" >
 
             
        <header id="list-container-header">
@@ -81,7 +86,10 @@ export default class ListContainer extends React.Component{
             getNewPlaceQuery = {this.getNewPlaceQuery}
             getFilteredMarker = {this.props.getFilteredMarker}
             linkListClickToMap = {this.props.linkListClickToMap}
+            linkListClickToMapFocus = {this.props.linkListClickToMapFocus}
             drawerItemSelectionAction = {this.props.drawerItemSelectionAction}
+            drawerItemSelectionActionFocus = {this.props.drawerItemSelectionActionFocus}
+
             ref={listView => {this.listViewdObject = listView}}
             ></ListView>
 

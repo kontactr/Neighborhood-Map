@@ -31,6 +31,30 @@
   }
 }
 
+
+@keyframes hamburger-drawer-show{
+  from {
+    left: -400px;
+  }
+  to {
+    left: 0px;
+  }
+}
+
+@keyframes hamburger-drawer-hide{
+  from {
+    left: 0px;
+  }
+  to {
+    left: -400px;
+  }
+}
+
+h3{
+  margin: 0px;
+  padding: 0px;
+}
+
 #map {
   height: 100%;
   order: 2;
@@ -100,6 +124,7 @@ html, body {
     transition: all 1s;
     z-index: 1;
     order: 1;
+    display: none;
   }
 
 
@@ -131,7 +156,7 @@ html, body {
   }
   
   #list-container{
-    display: block ;
+    display: block !important;
     background: black;
     height: 100%;
     transition: all 1s;
@@ -331,4 +356,14 @@ html, body {
   margin-bottom: 2px;
   color: black;
   font-weight: 400;
+}
+
+
+*:focus{
+  outline: 5px solid green;
+}
+
+#hamburger-button + #list-container[aria-hidden='false'] {
+  outline: 0px;
+
 }

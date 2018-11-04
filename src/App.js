@@ -44,19 +44,64 @@ class App extends Component {
     //this.mapChildObject.callMethod();
     this.setDrawerButton();
     
+    this.cacheButtonObject.compo.addEventListener("keyup" , (event) =>{
+        if(event.keyCode === 13 || event.keyCode === 32){
+            this.listContainerDisplay(event);          
+        }
+    });
+
+    window.onkeydown = function(e) { 
+      return !(e.keyCode === 32) ;
+     };
+    
+    console.log("All Set");
+    
+    
+    
+    
   }
 
   listContainerDisplay = (e) => {
     if(this.cacheButtonObject.pressed){
-      this.cacheButtonObject.drawer.style.left = "-400px";
-      this.cacheButtonObject.pressed = false;
+      
+      this.cacheButtonObject.drawer.style["animation-duration"] = "1s";
+      this.cacheButtonObject.drawer.style["animation-name"] = "hamburger-drawer-hide";
+      this.cacheButtonObject.drawer.style["animation-fill-mode"] = "forwards";
+      
+      this.cacheButtonObject.drawer.addEventListener("animationend" , (function rt(event){
+        event.preventDefault();
+        event.stopPropagation();
+        console.log("AnimationEnd - 1");
+        event.target.style.display = "none";
+        
 
+        event.target.removeEventListener("animationend" , rt);
+      }));
+
+      this.cacheButtonObject.pressed = false;
+      this.cacheButtonObject.drawer.setAttribute('aria-hidden' , "true");
+      
       
     }else{
-      this.cacheButtonObject.drawer.style.left = "0px";
+
+      this.cacheButtonObject.drawer.style.display = "block";
+      this.cacheButtonObject.drawer.style["animation-duration"] = "1s";
+      this.cacheButtonObject.drawer.style["animation-name"] = "hamburger-drawer-show";
+      this.cacheButtonObject.drawer.style["animation-fill-mode"] = "forwards";
+      
+      this.cacheButtonObject.drawer.addEventListener("animationend" , (function rt(event){
+        event.preventDefault();
+        event.stopPropagation();
+        console.log("AnimationEnd - 2");
+        
+        event.target.removeEventListener("animationend" , rt);
+      }));
+      
       this.cacheButtonObject.pressed = true;
+      this.cacheButtonObject.drawer.setAttribute('aria-hidden' , "false");
 
     }
+    
     this.cacheButtonObject.compo.classList.toggle("change");
     
   }
@@ -70,12 +115,51 @@ class App extends Component {
           //console.log("YES - 1");
 
           if(this.cacheButtonObject.pressed){
-            this.cacheButtonObject.drawer.style.left = "-400px";
+            
+            this.cacheButtonObject.drawer.style["animation-duration"] = "1s";
+            this.cacheButtonObject.drawer.style["animation-name"] = "hamburger-drawer-hide";
+            this.cacheButtonObject.drawer.style["animation-fill-mode"] = "forwards";
+      
+      this.cacheButtonObject.drawer.addEventListener("animationend" , (function rt(event){
+        event.preventDefault();
+        event.stopPropagation();
+        console.log("AnimationEnd - 1");
+        event.target.style.display = "none";
+        
+
+        event.target.removeEventListener("animationend" , rt);
+      }));
+
             this.cacheButtonObject.pressed = false;
+            this.cacheButtonObject.drawer.setAttribute('aria-hidden' , "true");
+            
             this.cacheButtonObject.compo.classList.toggle("change");
+
+            return true;
           }
+          return false;
+      }
+      return false;
+  }
+
+  linkListClickToMapFocus = (restaurant) => {
+        if(this.mapChildObject)
+          this.mapChildObject.linkListClickToMapMarker(restaurant , true);
+  }
+
+  getBackFocusList = () => {
+      if(this.listContainerChildObject){
+        this.listContainerChildObject.retriveBackFocus();
       }
   }
+
+  drawerItemSelectionActionFocus = () => {
+        
+        let p = this.drawerItemSelectionAction();
+        console.log("drawer-selection-action-focus",p);
+        return p;
+  }
+
   
   
   placesFoundByFourSquare = (event , placename) => {
@@ -153,7 +237,7 @@ class App extends Component {
 
   linkListClickToMap = (restaurant) => {
       if(this.mapChildObject){
-        this.mapChildObject.linkListClickToMapMarker(restaurant);
+        this.mapChildObject.linkListClickToMapMarker(restaurant , false);
       }
   }
 
@@ -169,7 +253,7 @@ class App extends Component {
        <section id="main-section">
 
        
-       <div id="hamburger-button" onClick={this.listContainerDisplay}>
+       <div role='button' tabIndex='0' id="hamburger-button" onClick={this.listContainerDisplay}>
           <div className='bar1'></div>
           <div className='bar2'></div>
           <div className='bar3'></div>
@@ -181,12 +265,16 @@ class App extends Component {
             getFilteredMarker = {(this.getFilteredMarker)}
             linkListClickToMap = {this.linkListClickToMap}
             drawerItemSelectionAction = {this.drawerItemSelectionAction}
+            drawerItemSelectionActionFocus = {this.drawerItemSelectionActionFocus}
+            linkListClickToMapFocus = {this.linkListClickToMapFocus}
             ref={listContainer => {this.listContainerChildObject = listContainer}}
         ></ListContainer>
 
-       <Map ref={map => {this.mapChildObject = map}}
-       getLocations = {this.getLocations}
+        <Map ref={map => {this.mapChildObject = map}}
+         getLocations = {this.getLocations}
+         getBackFocusList = {this.getBackFocusList}
        ></Map>
+       
        
       
       </section>

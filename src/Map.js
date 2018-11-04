@@ -19,12 +19,12 @@ promiseResolve = null;
     setTimeout(markerToNullAnimate.setAnimation.bind(markerToNullAnimate) , 5000 , null);
  }
 
- linkListClickToMapMarker = (restaurant) => {
+ linkListClickToMapMarker = (restaurant , focusable=false) => {
     
     if(this.state.largeInfowindow){
         let returnMarker = this.getFilterMarkerFromRestaurant(restaurant);
             if(returnMarker){
-                    this.populateInfoWindow(returnMarker);
+                    this.populateInfoWindow(returnMarker , focusable);
                     this.setMarkerAnimationBounceAndOff(returnMarker);
                    // returnMarker.setAnimation(window.google.maps.Animation.BOUNCE);
                    // setTimeout(this.setMarkerAnimationBounceOff  , 5000 , returnMarker);
@@ -35,7 +35,7 @@ promiseResolve = null;
             if(this.state.largeInfowindow){
                 let returnMarker = this.getFilterMarkerFromRestaurant(restaurant);
                 if(returnMarker){
-                    this.populateInfoWindow(returnMarker);
+                    this.populateInfoWindow(returnMarker , focusable);
                     this.setMarkerAnimationBounceAndOff(returnMarker);
                    // returnMarker.setAnimation(window.google.maps.Animation.BOUNCE);
                    // setTimeout(this.setMarkerAnimationBounceOff , 5000 , returnMarker);
@@ -57,7 +57,7 @@ promiseResolve = null;
  }
 
 
-getMakeImageUrl = (markerResId) => {
+getMakeImageUrl = (markerResId , temp) => {
 
     let url = new URL("https://api.foursquare.com/v2/venues/"+markerResId+"/photos?");
     let params = {
@@ -73,14 +73,83 @@ getMakeImageUrl = (markerResId) => {
     url.search = new URLSearchParams(params);
     console.log(url);
 
-    return fetch(url).then((res) => {return res.json()}).catch(() => {return {"meta":{"code":400}}});
+    temp.setContent("<div id='markerInfoWindowTitle'>Waiting...</div>");
 
-} 
+    return fetch(url).then((res) => {return res.json()});
+    //return Promise.resolve({meta: {code: 201}});
+
+}
+
+getSuccessInfoWindowContent = (title , firstName , lastName) =>{
+    
+    let parentDiv = document.createElement("div");
+    parentDiv.setAttribute("id" , "focus-div");
+    parentDiv.setAttribute("tabindex" , "-1");
+
+    let parentSection = document.createElement("section");
+    parentSection.setAttribute("id" , "markerInfoWindow");
+
+    let TitleDiv = document.createElement("div");
+    TitleDiv.setAttribute("id" , "markerInfoWindowTitle");
+    TitleDiv.textContent = title;
+
+    let ImageDiv = document.createElement("div");
+    let image = document.createElement("img");
+    image.setAttribute("id" , "markerInfoWindowImage");
+    image.setAttribute("src" , "");
+    image.setAttribute("aria-hidden" , "true");
+    image.setAttribute("alt" , title);
+    ImageDiv.appendChild(image);
+
+    let CreditDiv = document.createElement("div");
+    CreditDiv.setAttribute("id" , "markerInfoWindowCredit");
+    CreditDiv.textContent = ((firstName || "") + (lastName || "") + "" );
+
+    parentSection.appendChild(TitleDiv);
+    parentSection.appendChild(ImageDiv);
+    parentSection.appendChild(CreditDiv);
+
+    parentDiv.appendChild(parentSection);
+
+    return parentDiv;
+
+}
+
+getFailureInfoWindowContent = (title , firstMessage , secondMessage) => {
+
+
+
+    let parentDiv = document.createElement("div");
+    parentDiv.setAttribute("id" , "focus-div");
+    parentDiv.setAttribute("tabindex" , "-1");
+
+
+    let TitleDiv = document.createElement("div");
+    TitleDiv.setAttribute("id" , "markerInfoWindowTitle");
+    TitleDiv.textContent = title;
+
+    let ImageDiv = document.createElement("div");
+    ImageDiv.setAttribute("id" , "markerInfoWindowCredit");
+    ImageDiv.textContent = firstMessage;
+
+    let CreditDiv = document.createElement("div");
+    CreditDiv.setAttribute("id" , "markerInfoWindowCredit");
+    CreditDiv.textContent = (secondMessage || firstMessage);
+
+    parentDiv.appendChild(TitleDiv);
+    parentDiv.appendChild(ImageDiv);
+    parentDiv.appendChild(CreditDiv);
+    
+    return parentDiv;
+    
+}
 
  
-populateInfoWindow = (marker) => {
+populateInfoWindow = (marker , focusable=false) => {
 
     //console.log(marker , this.state.largeInfowindow);
+
+    let createdInfoDomElement = null;
 
     if(this.state.largeInfowindow){
 
@@ -92,58 +161,70 @@ populateInfoWindow = (marker) => {
                 }
             
             temp.marker = marker;
+            temp.marker.appFocusable = focusable;
             
 
             // Make sure the marker property is cleared if the infowindow is closed.
 
             //TODO: image se to null when closed or when another marker is clicked. 
 
-            temp.addListener('closeclick', function() {
-                temp.marker.setAnimation(null);
-                marker = null;
-            });
+                console.log(focusable , "upper");
+
+                let getBackFocusList = this.props.getBackFocusList;
+
+            
+            
+            //temp.addListener('closeclick',);
 
         }
 
-            this.getMakeImageUrl(marker.appMarkerId).then((res)=>{
+            this.getMakeImageUrl(marker.appMarkerId , temp).then((res)=>{
 
                 console.log(res);
 
+                
                 if(res.meta.code === 200){
 
-                    temp.setContent(
-                        "<section id='markerInfoWindow'>"+
-                        "<div id='markerInfoWindowTitle'>" + marker.title + "</div>" +
-                        "<div><img id='markerInfoWindowImage' src='' /></div>"+
-                        "<div id='markerInfoWindowCredit'> Credit: " + (res.response.photos.items[0].user.firstName || "") + "  "+ 
-                        (res.response.photos.items[0].user.lastName || "")
-                        +"</div>"+
-                        "</section>"
+                    createdInfoDomElement = this.getSuccessInfoWindowContent(marker.title, res.response.photos.items[0].user.firstName ,
+                        res.response.photos.items[0].user.lastName
                     );
+
+                    temp.setContent(createdInfoDomElement);    
 
                     let  photoRecObject = res.response.photos.items[0];
                     let photoUrl = photoRecObject.prefix+"200x200" + photoRecObject.suffix; 
 
                     document.getElementById("markerInfoWindowImage").setAttribute("src" , photoUrl);
 
+                    document.getElementById("focus-div").focus();
+
                 }else{
 
-                    temp.setContent('<div id="markerInfoWindowTitle">' + marker.title + '</div>' +
-                    '<div id="markerInfoWindowCredit">Photo Not Found</div>'+
-                    '<div id="markerInfoWindowCredit">Credit Not Found</div>'
-                    );
+                    
+                    
+                    
+                    createdInfoDomElement = this.getFailureInfoWindowContent(marker.title , "Photo Not Found" , "Credit Not Found");
 
+                    temp.setContent(createdInfoDomElement);
+                    
                 }
 
             }).catch((err) => {
                 
-                temp.setContent('<div id="markerInfoWindowTitle">' + marker.title + '</div>' +
-                '<div id="markerInfoWindowCredit">Photo Not Found</div>'+
-                '<div id="markerInfoWindowCredit">Credit Not Found</div>'
-                );
+                console.log(err);
+                createdInfoDomElement = this.getFailureInfoWindowContent(marker.title , "NetWork Error");
+                temp.setContent(createdInfoDomElement);
+                
+            }).then(() => {
+               createdInfoDomElement.focus();
             });
+
             
+
             temp.open(this.state.map, marker);
+            
+            
+
             
             
           
@@ -289,11 +370,32 @@ componentDidMount(){
             });
         });
 
+        let largeInfowindow = new window.google.maps.InfoWindow()
+        let callbackFocusFunction = this.props.getBackFocusList;
+
+        window.google.maps.event.addListener(largeInfowindow , 'closeclick' ,  function name(){
+                
+            if(largeInfowindow.marker)
+                largeInfowindow.marker.setAnimation(null);
+            
+            
+
+            console.log("close click called");
+            
+            if(largeInfowindow.marker.appFocusable){
+                console.log("GetBackFocusList called");
+                    callbackFocusFunction();
+            }
+
+            //window.google.maps.event.removeListener(this);
+        });
+        
+
         //change-1
         this.setState({
             map: map,
             markers: markers,
-            largeInfowindow: new window.google.maps.InfoWindow()
+            largeInfowindow: largeInfowindow
         });
     }).bind(this));
 }
@@ -334,8 +436,9 @@ getMarkerIcon = (title) => {
     }
 
     return markerUrl;
-
 }
+
+
 
     render(){
         return (
@@ -344,5 +447,7 @@ getMarkerIcon = (title) => {
     }
 
 }
+
+
 
 export default Map;
