@@ -1,17 +1,20 @@
 import React from 'react';
+import getMapOnject from './getIniMap';
 
 class Map extends React.Component{
 
 promiseResolve = null;
+bounds: [];
 
  state = {
      map: null,
      markers: [],
-     largeInfowindow: null
+     largeInfowindow: null,
+     
  }
 
  callMethod = () => {
-     console.log(this)
+     console.log(this);
  }
 
  setMarkerAnimationBounceAndOff = (markerToNullAnimate) => {
@@ -24,7 +27,19 @@ promiseResolve = null;
     if(this.state.largeInfowindow){
         let returnMarker = this.getFilterMarkerFromRestaurant(restaurant);
             if(returnMarker){
+
+           
+                        this.bounds =  this.state.map.getBounds();
+           
+
+                    let bound = new window.google.maps.LatLngBounds();
+                    bound.extend(new window.google.maps.LatLng(returnMarker.position.lat(),
+                            returnMarker.position.lng()
+                    ));
+                    returnMarker.getMap().fitBounds(bound);
+                    returnMarker.getMap().panToBounds(bound);
                     this.populateInfoWindow(returnMarker , focusable);
+                    
                     this.setMarkerAnimationBounceAndOff(returnMarker);
                    // returnMarker.setAnimation(window.google.maps.Animation.BOUNCE);
                    // setTimeout(this.setMarkerAnimationBounceOff  , 5000 , returnMarker);
@@ -35,6 +50,12 @@ promiseResolve = null;
             if(this.state.largeInfowindow){
                 let returnMarker = this.getFilterMarkerFromRestaurant(restaurant);
                 if(returnMarker){
+                    let bound = new window.google.maps.LatLngBounds();
+                    bound.extend(new window.google.maps.LatLng(returnMarker.position.lat(),
+                            returnMarker.position.lng()
+                    ));
+                    returnMarker.getMap().fitBounds(bound);
+                    returnMarker.getMap().panToBounds(bound);
                     this.populateInfoWindow(returnMarker , focusable);
                     this.setMarkerAnimationBounceAndOff(returnMarker);
                    // returnMarker.setAnimation(window.google.maps.Animation.BOUNCE);
@@ -71,7 +92,7 @@ getMakeImageUrl = (markerResId , temp) => {
     };
 
     url.search = new URLSearchParams(params);
-    console.log(url);
+    //console.log(url);
 
     temp.setContent("<div id='markerInfoWindowTitle'>Waiting...</div>");
 
@@ -105,10 +126,18 @@ getSuccessInfoWindowContent = (title , firstName , lastName) =>{
     CreditDiv.setAttribute("id" , "markerInfoWindowCredit");
     CreditDiv.textContent = ((firstName || "") + (lastName || "") + "" );
 
+    let CreditDiv1 = document.createElement("div");
+    CreditDiv1.setAttribute("id" , "markerInfoWindowPowerCredit");
+    CreditDiv1.innerHTML = "By <a href='https://developer.foursquare.com/' id='foursquare'>Foursquare</a> & <a href='https://www.flaticon.com/' id='flaticon'>Flaticon</a>";
+
+
     parentSection.appendChild(TitleDiv);
     parentSection.appendChild(ImageDiv);
     parentSection.appendChild(CreditDiv);
+    parentSection.appendChild(CreditDiv1);
 
+    
+    
     parentDiv.appendChild(parentSection);
 
     return parentDiv;
@@ -136,9 +165,17 @@ getFailureInfoWindowContent = (title , firstMessage , secondMessage) => {
     CreditDiv.setAttribute("id" , "markerInfoWindowCredit");
     CreditDiv.textContent = (secondMessage || firstMessage);
 
+    let CreditDiv1 = document.createElement("div");
+    CreditDiv1.setAttribute("id" , "markerInfoWindowPowerCredit");
+    CreditDiv1.innerHTML = "By <a href='https://developer.foursquare.com/' id='foursquare'>Foursquare</a> & <a href='https://www.flaticon.com/' id='flaticon'>Flaticon</a>";
+
+
+
     parentDiv.appendChild(TitleDiv);
     parentDiv.appendChild(ImageDiv);
     parentDiv.appendChild(CreditDiv);
+    parentDiv.appendChild(CreditDiv1);
+    
     
     return parentDiv;
     
@@ -162,13 +199,16 @@ populateInfoWindow = (marker , focusable=false) => {
             
             temp.marker = marker;
             temp.marker.appFocusable = focusable;
+
             
 
-            // Make sure the marker property is cleared if the infowindow is closed.
+            
 
-            //TODO: image se to null when closed or when another marker is clicked. 
+            
 
-                console.log(focusable , "upper");
+             
+
+                //console.log(focusable , "upper");
 
                 let getBackFocusList = this.props.getBackFocusList;
 
@@ -180,7 +220,7 @@ populateInfoWindow = (marker , focusable=false) => {
 
             this.getMakeImageUrl(marker.appMarkerId , temp).then((res)=>{
 
-                console.log(res);
+                //console.log(res);
 
                 
                 if(res.meta.code === 200){
@@ -211,7 +251,7 @@ populateInfoWindow = (marker , focusable=false) => {
 
             }).catch((err) => {
                 
-                console.log(err);
+                //console.log(err);
                 createdInfoDomElement = this.getFailureInfoWindowContent(marker.title , "NetWork Error");
                 temp.setContent(createdInfoDomElement);
                 
@@ -256,7 +296,7 @@ populateInfoWindow = (marker , focusable=false) => {
               marker.addListener('click' , (event) => {
                 this.populateInfoWindow(marker);
                 this.setMarkerAnimationBounceAndOff(marker);
-                console.log(marker);
+                //console.log(marker);
               } );
 
               bounds.extend(new window.google.maps.LatLng(marker.position.lat(),marker.position.lng()));
@@ -274,7 +314,7 @@ populateInfoWindow = (marker , focusable=false) => {
  
  getFilterMarker = (updatedLocation) => {
 
-    console.log(updatedLocation);
+    //console.log(updatedLocation);
 
     if(updatedLocation.length === 0){
 
@@ -299,7 +339,7 @@ populateInfoWindow = (marker , focusable=false) => {
         });
 
     }
-    console.log(updatedLocation , "in map final");
+    //console.log(updatedLocation , "in map final");
 
  }
 
@@ -345,7 +385,7 @@ componentWillMount(){
 }
 
 componentDidMount(){
-    console.log(this.promiseResolve);
+    //console.log(this.promiseResolve);
     this.promiseResolve.then((function(res){
         let map = new window.google.maps.Map(
             document.getElementById('map'),
@@ -357,19 +397,24 @@ componentDidMount(){
         );
 
         //change-1
-        let markers = [new window.google.maps.Marker({
-            "position": {
-                "lat":18.517027817210945,
-                "lng":73.85484481593303
-            },
-            "map": map,
-            "title": "New Poona Bakery",
-            "appMarkerId": "abcd",
-            "icon": this.getMarkerIcon("place")
-          }
 
-        )];
-  
+        let iniMarkers = getMapOnject();
+       // console.log(iniMarkers);
+        let markers = [];
+        let bounds = new window.google.maps.LatLngBounds();
+
+        iniMarkers.forEach((markerIni) => {
+            markerIni.map = map;
+            markerIni.icon = this.getMarkerIcon(markerIni.title);
+        //    console.log(markerIni);
+            let markerNewIni = new window.google.maps.Marker(
+                markerIni
+            );
+            markers.push(markerNewIni);
+            bounds.extend(new window.google.maps.LatLng(markerNewIni.position.lat(), markerNewIni.position.lng()));
+        });
+
+        
         markers.forEach((marker) => {
             marker.addListener("click" , () => {
                 this.populateInfoWindow(marker);    
@@ -377,32 +422,42 @@ componentDidMount(){
             });
         });
 
+        
+
+        map.fitBounds(bounds);
+        map.panToBounds(bounds);
+
+
+
         let largeInfowindow = new window.google.maps.InfoWindow()
         let callbackFocusFunction = this.props.getBackFocusList;
 
-        window.google.maps.event.addListener(largeInfowindow , 'closeclick' ,  function name(){
+        window.google.maps.event.addListener(largeInfowindow , 'closeclick' ,  () =>{
                 
             if(largeInfowindow.marker)
                 largeInfowindow.marker.setAnimation(null);
-            
+                
             
 
-            console.log("close click called");
+           // console.log("close click called");
             
             if(largeInfowindow.marker.appFocusable){
-                console.log("GetBackFocusList called");
+                map.fitBounds(this.bounds);  
+                map.panToBounds(this.bounds);
+                //console.log("GetBackFocusList called");
                     callbackFocusFunction();
             }
 
             //window.google.maps.event.removeListener(this);
         });
         
-
+        this.bounds = bounds;
         //change-1
         this.setState({
             map: map,
             markers: markers,
-            largeInfowindow: largeInfowindow
+            largeInfowindow: largeInfowindow,
+            
         });
     }).bind(this));
 }
@@ -449,7 +504,7 @@ getMarkerIcon = (title) => {
 
     render(){
         return (
-            <div id="map"></div>
+            <div role='application' aria-label='location on maps' id="map"></div>
         );
     }
 

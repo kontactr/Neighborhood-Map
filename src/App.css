@@ -325,7 +325,7 @@ html, body {
   flex-wrap: wrap;
   text-align: center;
   align-items: center;
-  width: 210px;
+  width: 216px;
   background: #f5a623;
 }
 
@@ -366,4 +366,35 @@ html, body {
 #hamburger-button + #list-container[aria-hidden='false'] {
   outline: 0px;
 
+}
+
+#set-location-describe , #filter-places-describe{
+  display: none;
+}
+
+#aria-live-updates{
+  top:-99px;
+  left: -99px;
+  position: absolute;
+}
+
+#list-view-outer-div{
+  width: 100%;
+}
+
+#markerInfoWindowPowerCredit{
+  background: #282c34;
+  width: 100%;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  font-size: 1.3em;
+  color: white;
+}
+
+#foursquare{
+  color: pink
+}
+
+#flaticon{
+  color: lawngreen;
 }

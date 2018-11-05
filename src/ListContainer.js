@@ -7,6 +7,7 @@ export default class ListContainer extends React.Component{
 
         locationQuery: "",
         placesQuery: "",
+        
 
         newLocations: (() => {
             let arr = this.props.getLocations();
@@ -16,6 +17,8 @@ export default class ListContainer extends React.Component{
 
 
     }
+
+    //Aria-Live here.
 
     retriveBackFocus = () =>{
         this.listViewdObject.retriveBackFocus();
@@ -52,7 +55,9 @@ export default class ListContainer extends React.Component{
         return this.state.placesQuery;
     }
 
-
+    getLocationQuery = () => {
+        return this.state.locationQuery;
+    }
     
 
     render(){
@@ -69,16 +74,24 @@ export default class ListContainer extends React.Component{
             <section id="form-style">
             <h2 id="filter-result-header">Filter Result</h2>
 
-            <form onSubmit={ (event) => {this.props.formSubmitEvent(event,this.state.locationQuery);} }>
+            <form onSubmit={ (event) => { this.setState({placesQuery: ""}); this.props.formSubmitEvent(event,this.state.locationQuery);} }>
 
                 <input type="text" value={this.state.locationQuery} onChange={this.locationQueryOnChange}
-                name="field1" placeholder="Enter Your Location" />
+                name="field1" placeholder="Enter Your Location" aria-label='Enter Your Location' 
+                aria-describedby='set-location-describe'
+                />
+                <p id='set-location-describe'>Enter Your Location Like Chicago,IL or similar</p>
 
                 <input type="text" value={this.state.placesQuery} onChange={this.placesQueryonChange}
-                name="field2" placeholder="Filter Result By Name Or Type" />
+                name="field2" placeholder="Filter Result By Name Or Type" aria-label='Filter Your Result'
+                aria-describedby='filter-places-describe'
+                />
+                <p id='filter-places-describe'>Filter Your Results By Name Or Type Of Places</p>
                 
                 <input id="submit-button" 
                  type="submit" value="Find Food" />
+
+                
             
             </form>
             </section>
@@ -86,6 +99,7 @@ export default class ListContainer extends React.Component{
             <ListView
             getnewLocations = {this.getnewLocations}
             getNewPlaceQuery = {this.getNewPlaceQuery}
+            getLocationQuery = {this.getLocationQuery}
             getFilteredMarker = {this.props.getFilteredMarker}
             linkListClickToMap = {this.props.linkListClickToMap}
             linkListClickToMapFocus = {this.props.linkListClickToMapFocus}

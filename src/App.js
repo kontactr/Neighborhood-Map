@@ -3,9 +3,9 @@ import logo from './logo.svg';
 import './App.css';
 import Map from './Map';
 import ListContainer from './ListContainer';
+import getOneOnject from './getIniLocation';
 
-
-function getOneOnject(){
+/*function getOneOnject(){
   return {
     "venue": {
      "categories": [{"id": "4bf58dd8d48988d150941735", "name": "Spanish Restaurant"}],
@@ -18,12 +18,12 @@ function getOneOnject(){
    "name": "New Poona Bakery"
      }
    }
-}
+}*/
 
 class App extends Component {
 
   state = {
-    locations: [getOneOnject()]
+    locations: getOneOnject()
   }
 
   cacheButtonObject = {
@@ -51,13 +51,16 @@ class App extends Component {
     });
 
     window.onkeydown = function(e) {
+
+
+      if(e.originalTarget){
       let p  = e.originalTarget.getAttribute("name");
-      console.log(p);
+      //console.log(p);
       if( !["field1" , "field2"].includes(p) ) {
-          return !(e.keyCode == 32);
+          return !(e.keyCode === 32);
       }
-    };
-    console.log("All Set");
+    } };
+    //console.log("All Set");
     
     
     
@@ -74,7 +77,7 @@ class App extends Component {
       this.cacheButtonObject.drawer.addEventListener("animationend" , (function rt(event){
         event.preventDefault();
         event.stopPropagation();
-        console.log("AnimationEnd - 1");
+       // console.log("AnimationEnd - 1");
         event.target.style.display = "none";
         
 
@@ -95,7 +98,7 @@ class App extends Component {
       this.cacheButtonObject.drawer.addEventListener("animationend" , (function rt(event){
         event.preventDefault();
         event.stopPropagation();
-        console.log("AnimationEnd - 2");
+       // console.log("AnimationEnd - 2");
         
         event.target.removeEventListener("animationend" , rt);
       }));
@@ -126,7 +129,7 @@ class App extends Component {
       this.cacheButtonObject.drawer.addEventListener("animationend" , (function rt(event){
         event.preventDefault();
         event.stopPropagation();
-        console.log("AnimationEnd - 1");
+       // console.log("AnimationEnd - 1");
         event.target.style.display = "none";
         
 
@@ -159,7 +162,7 @@ class App extends Component {
   drawerItemSelectionActionFocus = () => {
         
         let p = this.drawerItemSelectionAction();
-        console.log("drawer-selection-action-focus",p);
+        //console.log("drawer-selection-action-focus",p);
         return p;
   }
 
@@ -195,12 +198,12 @@ class App extends Component {
         resaturantArraysObject = 
           response.response.groups[0].items ;
 
-        console.log(resaturantArraysObject);
+        //console.log(resaturantArraysObject);
 
         resaturantArraysObject.msg = true;
         
       }else{
-        resaturantArraysObject.msg = false;
+        resaturantArraysObject.msg = true;
       }
     }).catch((error) => {
       

@@ -15,13 +15,19 @@ export default class ListView extends React.Component{
         })
     } */
 
+    ariaLiveObject = null
     activeElement = {element: "" , key: "" , focusBack: false}
+
+
+    componentDidMount(){
+        this.ariaLiveObject = document.getElementById("aria-live-updates");
+    }
 
 
     keyboardClickEvent = (restaurant) => {
 
         
-        console.log("Keyboard event start");
+        //console.log("Keyboard event start");
         if(this.activeElement.key === 13 || this.activeElement.key === 32)
         {
             
@@ -29,14 +35,14 @@ export default class ListView extends React.Component{
                     this.activeElement.focusBack = true;
             }
 
-            console.log("Element Focus" , this.activeElement.focusBack);
+            //console.log("Element Focus" , this.activeElement.focusBack);
             this.props.linkListClickToMapFocus(restaurant);
         }
     }
 
     retriveBackFocus = () =>{
         if(this.activeElement.focusBack)
-            console.log("for click also");
+            //console.log("for click also");
             this.activeElement.element.focus();
             this.activeElement = {element: "" , key: "" , focusBack: false};
     }
@@ -52,12 +58,25 @@ export default class ListView extends React.Component{
           //  console.log(true);
             
             filteredData =  newLocations.filter((restaurant) => {
+                
                 return (restaurant.venue.name.toLocaleLowerCase().includes(newPlacesQuery) ||
                         restaurant.venue.categories[0].name.toLocaleLowerCase().includes(newPlacesQuery) );
             });
         }
 
+        
         filteredData.msg = newLocations.msg;
+        //console.log("live -= " , filteredData.msg);
+
+        if(this.ariaLiveObject){
+        if(filteredData.msg){
+        this.ariaLiveObject.textContent = "List Changed with " + filteredData.length +" Elements with" +
+        "location Query "+ this.props.getLocationQuery() + " and filter query " + newPlacesQuery; }
+         
+        else{
+        this.ariaLiveObject.textContent = "Sorry NetWork Error";
+        }
+        }
 
         
         return filteredData;
@@ -81,9 +100,6 @@ olFocusEventTraverse = (event) => {
 
 }
 
-
-
-    
     render(){
 
         let filteredData = this.filterData(
@@ -91,14 +107,17 @@ olFocusEventTraverse = (event) => {
             this.props.getNewPlaceQuery()
         );
 
-        console.log(filteredData , "Asdsfsg");
+        //console.log(filteredData , "Asdsfsg");
         //console.log(this.props.getFilteredMarker);
         //if(this.props.getUpdateMapFunction())
         this.props.getFilteredMarker(filteredData);
-        console.log(filteredData , "Asdsfsg--1");
+        //console.log(filteredData , "Asdsfsg--1");
         //console.log(filteredData , filteredData.length);
 
-        return (<ol className='list-item-container'  id='ol-element' onKeyUp = { this.olFocusEventTraverse } >
+        return (
+        <div id='list-view-outer-div'>
+        <p id='aria-live-updates' aria-live='polite' tabIndex='-1'>Updates Are Here</p> 
+        <ol className='list-item-container'  id='ol-element' onKeyUp = { this.olFocusEventTraverse } >
             {
                 
                 ( filteredData.msg && filteredData.length > 0 && (
@@ -110,9 +129,9 @@ olFocusEventTraverse = (event) => {
                            this.props.drawerItemSelectionAction();
                            this.props.linkListClickToMap(restaurant);}}
                            
-                           onKeyDown ={ (event) => { console.log("Start Again");  this.activeElement = {key: event.keyCode , element: event.target , focusBack: true }  
+                           onKeyDown ={ (event) => { /*console.log("Start Again");*/  this.activeElement = {key: event.keyCode , element: event.target , focusBack: true }  
                            
-                           console.log(this.activeElement);
+                           //console.log(this.activeElement);
                            this.keyboardClickEvent(restaurant); }}
                            tabIndex="0" >
                         <h3 className='list-item-hotel-name'>{restaurant.venue.name}</h3>
@@ -144,7 +163,9 @@ olFocusEventTraverse = (event) => {
             
             }
 
-        </ol>)
+        </ol>
+        </div>
+        )
 
     }
 
