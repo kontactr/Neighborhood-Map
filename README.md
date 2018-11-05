@@ -1,44 +1,74 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Neighborhood Map (React)
+* [Udacity Front-End Nanodegree](https://in.udacity.com/course/front-end-web-developer-nanodegree--nd001) Project
+* important notes
+* What is it?
+* how to run
+* about code
 
-## Available Scripts
 
-In the project directory, you can run:
+# Important notes
 
-### `npm start`
+This project is created with [create-react-app](https://github.com/facebook/create-react-app) startup-code.
+```service worker only run in production mode.``` 
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
 
-### `npm test`
+# What is it?
+### Phases
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+* Main screen
 
-### `npm run build`
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Main screen
+ 
+* Main screen has two parts.
+  1) List part
+  2) Map part
+* At the start of the application some locations are provided in the list and maped 
+* user can set the new locations
+* user can filter the locations as per type or name and map will also reflect as per result.
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+# How To Run 
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+* clone this repo using git clone or zip file.
+  1) ```https://github.com/kontactr/Neighborhood-Map```
+* traverse to the directory
+* run the command  ```npm install``` in it
+* start the server using ```npm start``` or ```yarn start```
+* open the browser and navigate to  ```localhost:3000/```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Run Build Mode
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+* To run the project in the build mode run
+  ```npm run build```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+* Setup a static server and use run
+	1) ```npm install -g serve ```
+	2) ```serve -s build```
 
-## Learn More
+* And last navigate your browser to ```http://localhost:5000``` to  run the production build of the project.
+  
+# About Code
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### External libraries Used
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+* [React.js](https://reactjs.org/)
+* [Google Map](https://developers.google.com/maps/documentation/)
+* [Foursquare](https://developer.foursquare.com/)
+
+### Key concepts
+
+* React Fundamentals
+* AJAX Request using fetch api 
+* [React Component Communication](https://www.javascriptstuff.com/component-communication/)
+
+
+### Icons 
+
+* [Flaticon](https://www.flaticon.com/)
+
+### For Markdown
+
+* [markdown-code editor](https://jbt.github.io/markdown-editor/)
