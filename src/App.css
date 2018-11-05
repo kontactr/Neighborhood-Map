@@ -398,3 +398,36 @@ html, body {
 #flaticon{
   color: lawngreen;
 }
+
+#map-error{
+  text-align: center;
+  align-items: center;  
+  margin: auto;
+  
+}
+
+#map-error{
+  width: 100%;
+  
+  
+  
+}
+
+#map-error-main{
+  
+  color: white;
+  font-size: 4em;
+}
+
+#map-error-extra{
+  padding-top: 15px;
+  color: #f5a623;
+  text-align: center;
+  align-items: center;
+  font-size: 2em;
+  margin: auto;
+}
+
+#map-error-globe{
+  margin: auto;
+}

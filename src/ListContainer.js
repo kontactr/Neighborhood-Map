@@ -82,14 +82,16 @@ export default class ListContainer extends React.Component{
                 />
                 <p id='set-location-describe'>Enter Your Location Like Chicago,IL or similar</p>
 
+                
+                <input id="submit-button" 
+                 type="submit" value="Set Food Location" />
+
                 <input type="text" value={this.state.placesQuery} onChange={this.placesQueryonChange}
                 name="field2" placeholder="Filter Result By Name Or Type" aria-label='Filter Your Result'
                 aria-describedby='filter-places-describe'
                 />
                 <p id='filter-places-describe'>Filter Your Results By Name Or Type Of Places</p>
                 
-                <input id="submit-button" 
-                 type="submit" value="Find Food" />
 
                 
             

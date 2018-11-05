@@ -80,7 +80,7 @@ bounds: [];
 
 getMakeImageUrl = (markerResId , temp) => {
 
-    let url = new URL("https://api.foursquare.com/v2/venues/"+markerResId+"/photos?");
+    let url = new URL("https://api.foursquare.com/v2/venues/"+markerResId+".lko/photos?");
     let params = {
       
       
@@ -263,10 +263,6 @@ populateInfoWindow = (marker , focusable=false) => {
 
             temp.open(this.state.map, marker);
             
-            
-
-            
-            
           
     }
 
@@ -299,6 +295,7 @@ populateInfoWindow = (marker , focusable=false) => {
                 //console.log(marker);
               } );
 
+              if(marker && marker.position)
               bounds.extend(new window.google.maps.LatLng(marker.position.lat(),marker.position.lng()));
 
               return marker;
@@ -465,10 +462,31 @@ componentDidMount(){
 
  loadScript = () => {
 
+    window.gm_authFailure =  (err) => {
+        
+        let tempMapDomObject = document.getElementById("map");
+        tempMapDomObject.style.background = "#282c34";
+        tempMapDomObject.style.display ="flex";
+        tempMapDomObject.style.flexWrap ="no-wrap";
+        tempMapDomObject.innerHTML = ""+
+        "<div id='map-error'>"+
+        "<div id='map-error-main'>Map Not Load 😔</div> "+
+        "<div id='map-error-extra'>Maybe we have to search in globe.</div>"+
+        "<div id='map-error-globe'><img src='./earth-globe.png' alt='earth-globe' aria-hidden='true' />"+
+        "</div> "+
+        "</div>"
+
+
+        this.setState({
+            map: null
+        });
+
+    }
+
     return new Promise((resolve) => {
 
         let script = document.createElement("script");
-        script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyDMMgxBbkZCfyb1sXfdkA1XiFvyrOK8uxg&libraries=geometry&callback=initMap";
+        script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyB4KRQ3O9bgiSHAsC3KieDLn_wsGSclpS0&libraries=geometry&callback=initMap";
         script.async = true;
         script.defer = true;
         script.setAttribute("id" , "app-google-map-script");
