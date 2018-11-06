@@ -124,7 +124,7 @@ olFocusEventTraverse = (event) => {
 
                     filteredData.map((restaurant) => {
 //                        console.log(restaurant.venue.name);
-                       return  (<li key={restaurant.venue.id} className='list-item' onClick={(event) => {
+                       return  (<li role='button' key={restaurant.venue.id} className='list-item' onClick={(event) => {
                            
                            this.props.drawerItemSelectionAction();
                            this.props.linkListClickToMap(restaurant);}}

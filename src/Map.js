@@ -80,7 +80,7 @@ bounds: [];
 
 getMakeImageUrl = (markerResId , temp) => {
 
-    let url = new URL("https://api.foursquare.com/v2/venues/"+markerResId+".lko/photos?");
+    let url = new URL("https://api.foursquare.com/v2/venues/"+markerResId+"/photos?");
     let params = {
       
       
@@ -459,18 +459,15 @@ componentDidMount(){
     }).bind(this));
 }
 
-
- loadScript = () => {
-
-    window.gm_authFailure =  (err) => {
-        
+mapFailure = (message) => {
+    
         let tempMapDomObject = document.getElementById("map");
         tempMapDomObject.style.background = "#282c34";
         tempMapDomObject.style.display ="flex";
         tempMapDomObject.style.flexWrap ="no-wrap";
         tempMapDomObject.innerHTML = ""+
         "<div id='map-error'>"+
-        "<div id='map-error-main'>Map Not Load 😔</div> "+
+        `<div id='map-error-main'>${message} 😔</div> `+
         "<div id='map-error-extra'>Maybe we have to search in globe.</div>"+
         "<div id='map-error-globe'><img src='./earth-globe.png' alt='earth-globe' aria-hidden='true' />"+
         "</div> "+
@@ -480,7 +477,14 @@ componentDidMount(){
         this.setState({
             map: null
         });
+}
 
+
+ loadScript = () => {
+
+    window.gm_authFailure =  (err) => {
+            this.mapFailure("Map Not Load");
+        
     }
 
     return new Promise((resolve) => {
@@ -492,7 +496,7 @@ componentDidMount(){
         script.setAttribute("id" , "app-google-map-script");
         document.body.appendChild(script);
         window.initMap = resolve;
-        
+        script.onerror = this.mapFailure.bind(this , "Network Error");
 
     });
 }
